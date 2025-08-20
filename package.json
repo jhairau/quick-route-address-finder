@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.19.4 || >=22.18.0 || >=24.5.0"
+    "node": ">=20.0.0"
   },
   "engineStrict": true,
   "scripts": {
@@ -11,7 +11,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "build": "tsc && vite build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepack": "npm run build"
   },
   "main": "dist/main.js",
   "types": "dist/main.d.ts",

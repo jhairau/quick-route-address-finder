@@ -130,3 +130,81 @@ const results = await addressFinder({
   },
 });
 ```
+
+## Development
+
+### Development Prerequisites
+
+- Node.js 20.0.0 or higher
+- npm or yarn
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/jhairau/quick-route-address-finder.git
+cd quick-route-address-finder
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run linting
+npm run lint
+
+# Build the project
+npm run build
+```
+
+### Making Commits
+
+This project uses [Conventional Commits](https://conventionalcommits.org/) and [semantic-release](https://semantic-release.gitbook.io/) for automated versioning.
+
+Use the interactive commit helper:
+
+```bash
+npm run commit
+```
+
+Or write conventional commits manually:
+
+```bash
+git commit -m "feat: add new search parameter"
+git commit -m "fix: resolve timeout handling"
+git commit -m "docs: update API documentation"
+```
+
+For detailed release workflow information, see [SEMANTIC_RELEASE.md](./SEMANTIC_RELEASE.md).
+
+### Project Structure
+
+```text
+src/
+├── addressFinder.ts     # Main API function
+├── main.ts             # Public exports
+├── types/              # TypeScript type definitions
+│   ├── quick-route.ts  # Library types
+│   └── tom-tom.ts      # TomTom API types
+└── tests/              # Test files
+    ├── addressFinder.test.ts
+    └── test-data.ts
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes and add tests
+4. Ensure tests pass: `npm test`
+5. Ensure code quality: `npm run lint`
+6. Commit using conventional commits: `npm run commit`
+7. Push to your fork and create a Pull Request
+
+## License
+
+MIT © [Johnathan Hair](https://github.com/jhairau)

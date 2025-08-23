@@ -112,17 +112,17 @@ jobs:
         run: |
           VERSION="${{ github.event.inputs.version }}"
           npm version $VERSION --no-git-tag-version
-          git add package.json package-lock.json
-          git commit -m "chore: bump version to $VERSION"
 
       - name: Build package
         run: npm run build
 
-      - name: Create and push tag
+      - name: Create tag (without pushing to main)
         run: |
           VERSION="${{ github.event.inputs.version }}"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to $VERSION [skip ci]"
           git tag "v$VERSION"
-          git push origin main
+          # Only push the tag, not the main branch
           git push origin "v$VERSION"
 
       - name: Publish to NPM

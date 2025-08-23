@@ -1,0 +1,210 @@
+name: Release Branch Workflow
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  release:
+    name: Create Release from Branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from branch
+        id: version
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          echo "Branch: $BRANCH_NAME"
+
+          # Extract version from branch name (release/v1.0.0 or release/1.0.0)
+          if [[ "$BRANCH_NAME" =~ ^release/v?([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.\-]+)?)$ ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            
+            # Determine release type
+            if [[ "$VERSION" =~ -alpha ]]; then
+              echo "release_type=alpha" >> $GITHUB_OUTPUT
+            elif [[ "$VERSION" =~ -beta ]]; then
+              echo "release_type=beta" >> $GITHUB_OUTPUT  
+            elif [[ "$VERSION" =~ -rc ]]; then
+              echo "release_type=rc" >> $GITHUB_OUTPUT
+            else
+              echo "release_type=latest" >> $GITHUB_OUTPUT
+            fi
+            
+            echo "🎉 Release branch detected: v$VERSION"
+          else
+            echo "❌ Invalid release branch format: $BRANCH_NAME"
+            echo "Expected: release/v1.0.0 or release/1.0.0"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run checks
+        run: |
+          npm run lint
+          npm run test:coverage
+          npm run build
+
+      - name: Verify version in package.json
+        run: |
+          EXPECTED_VERSION="${{ steps.version.outputs.version }}"
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+
+          if [[ "$PACKAGE_VERSION" != "$EXPECTED_VERSION" ]]; then
+            echo "❌ Version mismatch!"
+            echo "Branch version: $EXPECTED_VERSION"
+            echo "package.json version: $PACKAGE_VERSION"
+            echo ""
+            echo "Please update package.json version to match branch name."
+            exit 1
+          fi
+
+          echo "✅ Version verified: $PACKAGE_VERSION"
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          echo "📌 Created tag: v$VERSION"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "## What's Changed" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            echo "**Changes since $LAST_TAG:**" >> $GITHUB_OUTPUT
+            git log --pretty=format:"* %s (%h)" $LAST_TAG..HEAD >> $GITHUB_OUTPUT
+          else
+            echo "**Recent commits:**" >> $GITHUB_OUTPUT
+            git log --pretty=format:"* %s (%h)" HEAD~10..HEAD >> $GITHUB_OUTPUT
+          fi
+          echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          body: |
+            # Release ${{ steps.version.outputs.version }}
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ## Installation
+
+            ```bash
+            npm install quick-route-address-finder@${{ steps.version.outputs.version }}
+            ```
+
+            ## Release Branch
+
+            **Branch:** `${{ github.ref_name }}`
+            **Commit:** ${{ github.sha }}
+
+            ---
+
+            📦 [View on NPM](https://www.npmjs.com/package/quick-route-address-finder/v/${{ steps.version.outputs.version }})
+          draft: false
+          prerelease: ${{ steps.version.outputs.release_type != 'latest' }}
+
+  publish-npm:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    needs: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js with NPM registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Extract version info
+        id: version
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          if [[ "$BRANCH_NAME" =~ ^release/v?([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.\-]+)?)$ ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            if [[ "$VERSION" =~ -alpha ]]; then
+              RELEASE_TYPE="alpha"
+            elif [[ "$VERSION" =~ -beta ]]; then
+              RELEASE_TYPE="beta"  
+            elif [[ "$VERSION" =~ -rc ]]; then
+              RELEASE_TYPE="rc"
+            else
+              RELEASE_TYPE="latest"
+            fi
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "release_type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to NPM
+        run: |
+          RELEASE_TYPE="${{ steps.version.outputs.release_type }}"
+          VERSION="${{ steps.version.outputs.version }}"
+
+          if [[ "$RELEASE_TYPE" == "latest" ]]; then
+            echo "📦 Publishing $VERSION to NPM (latest)"
+            npm publish
+          else
+            echo "📦 Publishing $VERSION to NPM (tag: $RELEASE_TYPE)"
+            npm publish --tag $RELEASE_TYPE
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  cleanup:
+    name: Cleanup Release Branch
+    runs-on: ubuntu-latest
+    needs: [release, publish-npm]
+    if: always() && needs.publish-npm.result == 'success'
+
+    steps:
+      - name: Delete release branch
+        run: |
+          echo "🧹 Cleaning up release branch: ${{ github.ref_name }}"
+          # Optional: Delete the release branch after successful release
+          # git push origin --delete ${{ github.ref_name }}

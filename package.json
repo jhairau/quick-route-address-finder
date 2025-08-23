@@ -1,6 +1,6 @@
 {
   "name": "quick-route-address-finder",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
@@ -10,11 +10,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:node-compat": "node scripts/test-node-compat.js",
     "build": "tsc && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check-engines": "node scripts/check-engines.js",
+    "release": "node scripts/release.js",
     "prepack": "npm run build",
     "prepare": "husky"
   },

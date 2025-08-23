@@ -35,7 +35,7 @@ import { addressFinder } from 'quick-route-address-finder';
 
 const results = await addressFinder({
   query: '1 Martin Place Sydney',
-  apiKey: 'your-tomtom-api-key'
+  apiKey: 'your-tomtom-api-key',
 });
 
 console.log(results.addresses);
@@ -57,20 +57,21 @@ Search for addresses using the TomTom Search API.
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `query` | `string` | ✅ | The address search query |
-| `apiKey` | `string` | ✅ | Your TomTom API key |
-| `options` | `FindAddressesOptions` | ❌ | Search configuration options |
+| Parameter | Type                   | Required | Description                  |
+| --------- | ---------------------- | -------- | ---------------------------- |
+| `query`   | `string`               | ✅       | The address search query     |
+| `apiKey`  | `string`               | ✅       | Your TomTom API key          |
+| `options` | `FindAddressesOptions` | ❌       | Search configuration options |
 
 **Options:**
 
 ```typescript
 interface FindAddressesOptions {
-  limit?: number;        // Max results (default: 5)
+  limit?: number; // Max results (default: 5)
   minFuzzyLevel?: number; // Minimum fuzzy level (default: 1)
   maxFuzzyLevel?: number; // Maximum fuzzy level (default: 2)
-  geoBias?: {            // Bias results towards a location
+  geoBias?: {
+    // Bias results towards a location
     lat: number;
     lon: number;
   };
@@ -90,10 +91,10 @@ interface FindAddressesOptions {
 
 ```typescript
 interface QuickRouteStandardAddress {
-  formatted: string;    // Human-readable address
-  components: object;   // Structured address components
-  latitude: number;     // Latitude coordinate
-  longitude: number;    // Longitude coordinate
+  formatted: string; // Human-readable address
+  components: object; // Structured address components
+  latitude: number; // Latitude coordinate
+  longitude: number; // Longitude coordinate
 }
 ```
 
@@ -106,7 +107,7 @@ import { addressFinder } from 'quick-route-address-finder';
 
 const results = await addressFinder({
   query: 'Opera House Sydney',
-  apiKey: process.env.TOMTOM_API_KEY
+  apiKey: process.env.TOMTOM_API_KEY,
 });
 
 console.log(`Found ${results.addresses.length} addresses`);
@@ -123,9 +124,9 @@ const results = await addressFinder({
     minFuzzyLevel: 1,
     maxFuzzyLevel: 3,
     geoBias: {
-      lat: -37.8136,  // Melbourne CBD
-      lon: 144.9631
-    }
-  }
+      lat: -37.8136, // Melbourne CBD
+      lon: 144.9631,
+    },
+  },
 });
 ```

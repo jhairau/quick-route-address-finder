@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+coverage/
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# Husky
+.husky/_
+
+# Package files
+package-lock.json

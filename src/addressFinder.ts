@@ -1,10 +1,10 @@
-import * as z from "zod/mini";
-import { QuickRouteStandardAddress } from "./types/quick-route";
+import * as z from 'zod/mini';
+import { QuickRouteStandardAddress } from './types/quick-route';
 import {
   TomTomSearchParams,
   type TomTomSearchResult,
   type TomTomSearchResults,
-} from "./types/tom-tom";
+} from './types/tom-tom';
 
 export function buildQueryString(
   apiKey: string,
@@ -15,17 +15,17 @@ export function buildQueryString(
     limit: String(parsedOptions.limit || 5),
     minFuzzyLevel: String(parsedOptions.minFuzzyLevel || 1),
     maxFuzzyLevel: String(parsedOptions.maxFuzzyLevel || 2),
-    typeahead: "true",
-    countrySet: "aus", // hardcoded for Australia
-    view: "Unified",
-    relatedPois: "off",
+    typeahead: 'true',
+    countrySet: 'aus', // hardcoded for Australia
+    view: 'Unified',
+    relatedPois: 'off',
     key: apiKey,
   };
 
   const { geoBias } = parsedOptions;
 
   if (geoBias) {
-    params["geoBias"] = `point:${geoBias.lat},${geoBias.lon}`;
+    params['geoBias'] = `point:${geoBias.lat},${geoBias.lon}`;
   }
 
   return new URLSearchParams(params).toString();

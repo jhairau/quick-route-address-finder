@@ -1,0 +1,7 @@
+echo "🚀 Running pre-push hooks..."
+
+# Run tests with coverage
+echo "🧪 Running tests with coverage..."
+npm run test:coverage
+
+echo "✅ Pre-push checks passed!"

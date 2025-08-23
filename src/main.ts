@@ -1,2 +1,2 @@
-export * from "./addressFinder";
-export * from "./types/tom-tom";
+export * from './addressFinder';
+export * from './types/tom-tom';

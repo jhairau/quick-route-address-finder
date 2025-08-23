@@ -1,0 +1,11 @@
+echo "🔍 Running pre-commit hooks..."
+
+# Run lint-staged (lints and formats only staged files)
+echo "🔧 Running lint-staged..."
+npx lint-staged
+
+# Run tests
+echo "🧪 Running tests..."
+npm test
+
+echo "✅ Pre-commit checks passed!"

@@ -1,0 +1,19 @@
+# Check if commit message follows conventional commits format
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Commit message should follow conventional commits format:"
+    echo "  <type>[optional scope]: <description>"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add address validation"
+    echo "  fix(api): resolve TomTom timeout issue"
+    echo "  docs: update README installation guide"
+    echo "  test: add unit tests for addressFinder"
+    echo ""
+    echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+    echo ""
+    exit 1
+fi

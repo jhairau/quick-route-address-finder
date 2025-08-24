@@ -46,8 +46,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v$(jq -r .version package.json)
-          release_name: Release v$(jq -r .version package.json)
+          tag_name: v${{ steps.pkg.outputs.version }}
+          release_name: Release v${{ steps.pkg.outputs.version }}
           draft: false
           prerelease: false
 

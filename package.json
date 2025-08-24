@@ -56,8 +56,8 @@
     "zod": "4.0.15"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.4.62",
-    "@rollup/rollup-darwin-arm66": "4.4.62"
+    "@rollup/rollup-linux-x64-gnu": "4.46.4",
+    "@rollup/rollup-darwin-arm64": "4.46.4"
   },
   "overrides": {
     "tmp": "0.2.4"

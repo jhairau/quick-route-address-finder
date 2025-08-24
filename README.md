@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/github/jhairau/quick-route-address-finder/graph/badge.svg?token=M1L1IQFJSX)](https://codecov.io/github/jhairau/quick-route-address-finder)
 [![npm version](https://badge.fury.io/js/quick-route-address-finder.svg)](https://badge.fury.io/js/quick-route-address-finder)
 [![Node.js Version](https://img.shields.io/node/v/quick-route-address-finder.svg)](https://nodejs.org/)
+[![Known Vulnerabilities](https://snyk.io/test/github/jhairau/quick-route-address-finder/badge.svg)](https://snyk.io/test/github/jhairau/quick-route-address-finder)
 
 A TypeScript library for finding and geocoding Australian addresses using the TomTom Search API. Built with modern ESM modules and full type safety.
 

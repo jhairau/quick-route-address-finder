@@ -16,9 +16,6 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check-engines": "node scripts/check-engines.js",
-    "semantic-release": "semantic-release",
-    "release:dry": "semantic-release --dry-run",
     "commit": "cz",
     "prepack": "npm run build",
     "prepare": "husky"
@@ -31,13 +28,7 @@
   "description": "Quick Route Address Finder",
   "devDependencies": {
     "@eslint/js": "9.32.0",
-    "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "11.0.4",
-    "@semantic-release/npm": "12.0.2",
     "@types/jest": "30.0.0",
-    "commitizen": "4.3.1",
-    "cz-conventional-changelog": "3.3.0",
     "eslint": "9.32.0",
     "globals": "16.3.0",
     "husky": "9.1.7",
@@ -69,10 +60,5 @@
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }

@@ -16,7 +16,7 @@ export function buildQueryString(
     minFuzzyLevel: String(parsedOptions.minFuzzyLevel || 1),
     maxFuzzyLevel: String(parsedOptions.maxFuzzyLevel || 2),
     typeahead: 'true',
-    countrySet: 'aus', // hardcoded for Australia
+    countrySet: 'AUS', // hardcoded for Australia
     view: 'Unified',
     relatedPois: 'off',
     key: apiKey,
@@ -64,10 +64,14 @@ export async function addressFinder({
   query,
   apiKey,
   options = {},
+  timeoutMs = 1000,
+  abortSignal,
 }: {
   query: string;
   apiKey: string;
   options?: FindAddressesOptions;
+  timeoutMs?: number;
+  abortSignal?: AbortSignal;
 }): Promise<{
   addresses: QuickRouteStandardAddress[];
   _raw: TomTomSearchResults;
@@ -75,9 +79,17 @@ export async function addressFinder({
   const queryEncoded = encodeURIComponent(query);
   const queryString = buildQueryString(apiKey, options);
 
+  // Set up timeout handling
+  const abortController = new AbortController();
+  const timer = setTimeout(abortController.abort, timeoutMs);
+  const _abortSignal = abortSignal ?? abortController.signal;
+
   const result = await fetch(
-    `https://api.tomtom.com/search/2/search/${queryEncoded}.json?${queryString}`
+    `https://api.tomtom.com/search/2/search/${queryEncoded}.json?${queryString}`,
+    { signal: _abortSignal }
   );
+
+  clearTimeout(timer);
 
   if (!result.ok) {
     throw new Error(

@@ -64,7 +64,7 @@ describe('buildQueryString', () => {
     expect(qs).toContain('minFuzzyLevel=1');
     expect(qs).toContain('maxFuzzyLevel=2');
     expect(qs).toContain(`key=${validApiKey}`);
-    expect(qs).toContain('countrySet=aus');
+    expect(qs).toContain('countrySet=AUS');
     expect(qs).not.toContain('geoBias');
   });
 

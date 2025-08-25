@@ -10,7 +10,7 @@ export type TomTomSearchParams = {
   minFuzzyLevel: string;
   maxFuzzyLevel: string;
   typeahead: 'true' | 'false';
-  countrySet: 'aus'; // this does support more countries, but we are hardcoding to Australia for now
+  countrySet: 'AUS'; // this does support more countries, but we are hardcoding to Australia for now
   view: string;
   relatedPois: string;
   key: string;

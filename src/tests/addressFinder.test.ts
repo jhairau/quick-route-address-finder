@@ -55,6 +55,30 @@ describe('addressFinder', () => {
       /TomTom API request failed with status 404: Not Found and body Not Found Body/
     );
   });
+
+  it('should abort the fetch when abortSignal is triggered', async () => {
+    // Simulate fetch that never resolves unless aborted
+    const abortError = Object.assign(new Error('Aborted'), {
+      name: 'AbortError',
+    });
+    global.fetch = jest.fn().mockImplementation((_url, opts) => {
+      return new Promise((_resolve, reject) => {
+        if (opts && opts.signal) {
+          opts.signal.addEventListener('abort', () => {
+            reject(abortError);
+          });
+        }
+      });
+    });
+    const abortController = new AbortController();
+    const promise = addressFinder({
+      query: 'test',
+      apiKey: validApiKey,
+      abortSignal: abortController.signal,
+    });
+    abortController.abort();
+    await expect(promise).rejects.toMatchObject({ name: 'AbortError' });
+  });
 });
 
 describe('buildQueryString', () => {

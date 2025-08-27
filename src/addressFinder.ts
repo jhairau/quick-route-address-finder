@@ -81,7 +81,7 @@ export async function addressFinder({
 
   // Set up timeout handling
   const abortController = new AbortController();
-  const timer = setTimeout(abortController.abort, timeoutMs);
+  const timer = setTimeout(() => abortController.abort(), timeoutMs);
   const _abortSignal = abortSignal ?? abortController.signal;
 
   const result = await fetch(
